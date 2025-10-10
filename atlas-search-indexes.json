@@ -1,0 +1,124 @@
+{
+  "stores": {
+    "name": "business_search",
+    "definition": {
+      "mappings": {
+        "dynamic": false,
+        "fields": {
+          "businessName": {
+            "type": "string",
+            "analyzer": "lucene.standard"
+          },
+          "tags": {
+            "type": "string",
+            "analyzer": "lucene.standard"
+          },
+          "state": {
+            "type": "string",
+            "analyzer": "lucene.standard"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "dealsCount": {
+            "type": "number"
+          },
+          "priority": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  },
+  "deals": {
+    "name": "deal_search",
+    "definition": {
+      "mappings": {
+        "dynamic": false,
+        "fields": {
+          "offerName": {
+            "type": "string",
+            "analyzer": "lucene.standard"
+          },
+          "description": {
+            "type": "string",
+            "analyzer": "lucene.standard"
+          },
+          "menu": {
+            "type": "string",
+            "analyzer": "lucene.standard"
+          },
+          "course": {
+            "type": "string",
+            "analyzer": "lucene.standard"
+          },
+          "cuisine": {
+            "type": "string",
+            "analyzer": "lucene.standard"
+          },
+          "categoryName": {
+            "type": "string",
+            "analyzer": "lucene.standard"
+          },
+          "tags": {
+            "type": "string",
+            "analyzer": "lucene.standard"
+          },
+          "businessName": {
+            "type": "string",
+            "analyzer": "lucene.standard"
+          },
+          "status": {
+            "type": "string"
+          },
+          "promoStartDate": {
+            "type": "date"
+          },
+          "promoEndDate": {
+            "type": "date"
+          },
+          "offer": {
+            "type": "number"
+          },
+          "businessId": {
+            "type": "objectId"
+          }
+        }
+      }
+    }
+  },
+  "locations": {
+    "name": "location_search",
+    "definition": {
+      "mappings": {
+        "dynamic": false,
+        "fields": {
+          "geoLocation": {
+            "type": "geo"
+          },
+          "loc": {
+            "type": "number"
+          },
+          "address": {
+            "type": "string",
+            "analyzer": "lucene.standard"
+          },
+          "city": {
+            "type": "string",
+            "analyzer": "lucene.standard"
+          },
+          "state": {
+            "type": "string",
+            "analyzer": "lucene.standard"
+          },
+          "businessId": {
+            "type": "objectId"
+          },
+          "isAvailable": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}
