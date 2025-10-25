@@ -15,23 +15,28 @@ mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('Connected to MongoDB Atlas'))
-.catch((error) => console.error('MongoDB connection error:', error));
+  .then(() => console.log('Connected to MongoDB Atlas'))
+  .catch((error) => console.error('MongoDB connection error:', error));
 
 // Routes
 const searchRoutes = require('./routes/search');
 const testRoutes = require('./routes/test');
 const atlasTestRoutes = require('./routes/atlasTest');
+const autocompleteRoutes = require('./routes/autocomplete');
 app.use('/api/search', searchRoutes);
 app.use('/api/test', testRoutes);
 app.use('/api/atlas-test', atlasTestRoutes);
+app.use('/api/autocomplete', autocompleteRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
-  res.json({ 
+  res.json({
     message: 'Food Search API with MongoDB Atlas',
     endpoints: {
-      search: '/api/search?query=pizza&latitude=40.7128&longitude=-74.0060&radius=5000&limit=10&type=business'
+      search: '/api/search?query=pizza&latitude=40.7128&longitude=-74.0060&radius=5000&limit=10&type=business',
+      autocompleteTags: '/api/autocomplete/tags?query=bur&limit=10',
+      autocompleteAll: '/api/autocomplete/all?query=bur&limit=10',
+      autocompleteAll: '/api/autocomplete/unified?query=bur&limit=10',
     }
   });
 });

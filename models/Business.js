@@ -52,10 +52,12 @@ const businessSchema = new mongoose.Schema({
   _sv: Number,
   __v: Number
 }, {
-  collection: 'stores'
+  collection: 'stores',
+  autoIndex: false // Disable automatic index creation
 });
 
 // Atlas Search indexes are managed in MongoDB Atlas UI
-// No need for text indexes in the schema
+// Regular indexes are managed manually in Atlas
+// Do not create indexes automatically
 
 module.exports = mongoose.model('Business', businessSchema);

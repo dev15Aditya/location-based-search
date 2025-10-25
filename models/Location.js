@@ -18,8 +18,7 @@ const locationSchema = new mongoose.Schema({
       default: 'Point'
     },
     coordinates: {
-      type: [Number], // [longitude, latitude] - GeoJSON format
-      index: '2dsphere'
+      type: [Number] // [longitude, latitude] - GeoJSON format
     }
   },
   state: String,
@@ -44,11 +43,11 @@ const locationSchema = new mongoose.Schema({
   updatedAt: Date,
   __v: Number
 }, {
-  collection: 'locations'
+  collection: 'locations',
+  autoIndex: false // Disable automatic index creation
 });
 
-// Keep existing index and add new geospatial index
-locationSchema.index({ loc: '2dsphere', businessId: 1 }); // Existing index
-locationSchema.index({ geoLocation: '2dsphere' }); // New GeoJSON index
+// Indexes are managed in MongoDB Atlas
+// Do not create indexes automatically
 
 module.exports = mongoose.model('Location', locationSchema);

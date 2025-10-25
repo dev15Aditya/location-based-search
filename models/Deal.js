@@ -55,10 +55,12 @@ const dealSchema = new mongoose.Schema({
   embeddingUpdatedAt: Date,
   __v: Number
 }, {
-  collection: 'deals'
+  collection: 'deals',
+  autoIndex: false // Disable automatic index creation
 });
 
 // Atlas Search indexes are managed in MongoDB Atlas UI
-// No need for text indexes in the schema
+// Regular indexes are managed manually in Atlas
+// Do not create indexes automatically
 
 module.exports = mongoose.model('Deal', dealSchema);
