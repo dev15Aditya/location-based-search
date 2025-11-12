@@ -440,8 +440,765 @@ const autocompleteUnified = async (req, res) => {
   }
 };
 
+const autocompleteSearch = async (req, res) => {
+  try {
+    // const { lat, lng, query, limit = 10, maxDistance = 5 } = req.query;
+    const { query } = req.query;
+
+    // if (!query || !lat || !lng) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Missing lat, lng, or query",
+    //   });
+    // }
+
+    const limit = 10;
+    // const query = "Hawaiian"
+    const lat = 47.5617161;
+    const lng = -122.3779385;
+    const maxDistanceMeters = 5 * 1609.34;
+
+
+    const latNum = parseFloat(lat);
+    const lngNum = parseFloat(lng);
+    const limitNum = parseInt(limit);
+    // const maxDistanceMeters = parseInt(maxDistance) * 1609.34; // Convert miles to meters
+
+    const SearchIndex = require('../models/SearchIndex');
+
+    const respo = await SearchIndex.find();
+    // console.log("Res---->>> ", respo)
+
+    // Perform autocomplete search with geo filtering
+    // const results = await SearchIndex.aggregate([
+    //   {
+    //     $search: {
+    //       index: 'autocomplete_geo_index',
+    //       compound: {
+    //         must: [
+    //           {
+    //             geoWithin: {
+    //               circle: {
+    //                 center: {
+    //                   type: 'Point',
+    //                   coordinates: [lngNum, latNum]
+    //                 },
+    //                 radius: maxDistanceMeters
+    //               },
+    //               path: 'location.coordinates'
+    //             }
+    //           }
+    //         ],
+    //         should: [
+    //           {
+    //             autocomplete: {
+    //               query: query,
+    //               path: 'businessName',
+    //               fuzzy: { maxEdits: 1, prefixLength: 2 },
+    //               score: { boost: { value: 3 } }
+    //             }
+    //           },
+    //           {
+    //             autocomplete: {
+    //               query: query,
+    //               path: 'dishes.name',
+    //               fuzzy: { maxEdits: 1, prefixLength: 2 },
+    //               score: { boost: { value: 2 } }
+    //             }
+    //           },
+    //           {
+    //             text: {
+    //               query: query,
+    //               path: 'cuisine',
+    //               fuzzy: { maxEdits: 1, prefixLength: 2 },
+    //               score: { boost: { value: 2 } }
+    //             }
+    //           }
+    //         ],
+    //         // filter: [
+    //         //   {
+    //         //     geoWithin: {
+    //         //       path: 'location.coordinates',
+    //         //       circle: {
+    //         //         center: {
+    //         //           type: 'Point',
+    //         //           coordinates: [lngNum, latNum],
+    //         //         },
+    //         //         radius: 16090.34,
+    //         //       },
+    //         //     },
+    //         //   },
+    //         // ],
+ 
+    //       }
+    //     }
+    //   },
+    //   { $limit: 100 },
+    //   // {
+    //   //   $addFields: {
+    //   //     searchScore: { $meta: 'searchScore' }
+    //   //   }
+    //   // }
+    // ]);
+
+    // const results = await SearchIndex.aggregate([
+    //   {
+    //     $search: {
+    //       index: "autocomplete_geo_index",
+    //       compound: {
+    //         should: [
+    //           {
+    //             autocomplete: {
+    //               query: query,
+    //               path: "businessName",
+    //               fuzzy: { maxEdits: 1, prefixLength: 2 }
+    //             }
+    //           },
+    //           {
+    //             autocomplete: {
+    //               query: query,
+    //               path: "dishes.name",
+    //               fuzzy: { maxEdits: 1, prefixLength: 2 }
+    //             }
+    //           }
+    //         ]
+    //       }
+    //     }
+    //   },
+    //   { $addFields: { score: { $meta: "searchScore" } } },
+    //   { $limit: 10 }
+    // ]);
+
+    // const results = await SearchIndex.aggregate([
+    //   {
+    //     $search: {
+    //       index: "autocomplete_geo_index",
+    //       compound: {
+    //         must: [
+    //           {
+    //             geoWithin: {
+    //               circle: {
+    //                 center: {
+    //                   type: "Point",
+    //                   coordinates: [lngNum, latNum]
+    //                 },
+    //                 radius: maxDistanceMeters
+    //               },
+    //               path: "location.coordinates"
+    //             }
+    //           }
+    //         ],
+    //         should: [
+    //           {
+    //             autocomplete: {
+    //               query: query,
+    //               path: "businessName",
+    //               fuzzy: { maxEdits: 1, prefixLength: 2 },
+    //               score: { boost: { value: 3 } }
+    //             }
+    //           },
+    //           {
+    //             autocomplete: {
+    //               query: query,
+    //               path: "dishes.name",
+    //               fuzzy: { maxEdits: 1, prefixLength: 2 },
+    //               score: { boost: { value: 2 } }
+    //             }
+    //           },
+    //           {
+    //             text: {
+    //               query: query,
+    //               path: "cuisine",
+    //               fuzzy: { maxEdits: 1, prefixLength: 2 },
+    //               score: { boost: { value: 1.5 } }
+    //             }
+    //           }
+    //         ],
+    //         minimumShouldMatch: 1
+    //       }
+    //     }
+    //   },
+    //   { $addFields: { searchScore: { $meta: "searchScore" } } },
+    //   { $limit: 10 }
+    // ]);
+
+    // const results = await SearchIndex.aggregate([
+    //   {
+    //     $search: {
+    //       index: 'autocomplete_geo_index',
+    //       compound: {
+    //         should: [
+    //           {
+    //             autocomplete: {
+    //               query: query,
+    //               path: 'businessName',
+    //               fuzzy: { maxEdits: 1, prefixLength: 2 },
+    //               score: { boost: { value: 3 } }
+    //             }
+    //           },
+    //           {
+    //             autocomplete: {
+    //               query: query,
+    //               path: 'dishes.name',
+    //               fuzzy: { maxEdits: 1, prefixLength: 2 },
+    //               score: { boost: { value: 2 } }
+    //             }
+    //           },
+    //           {
+    //             text: {
+    //               query: query,
+    //               path: 'cuisine',
+    //               fuzzy: { maxEdits: 1, prefixLength: 2 },
+    //               score: { boost: { value: 2 } }
+    //             }
+    //           }
+    //         ],
+    //         filter: [
+    //           {
+    //             geoWithin: {
+    //               path: 'location.coordinates',
+    //               circle: {
+    //                 center: {
+    //                   type: 'Point',
+    //                   coordinates: [lngNum, latNum],
+    //                 },
+    //                 radius: 16090.34,
+    //               },
+    //             },
+    //           },
+    //         ],
+    //       }
+    //     }
+    //   },
+    //   { $limit: 100 }
+    // ]);
+    
+
+    // const results = await SearchIndex.aggregate([
+    //   {
+    //     $search: {
+    //       index: "autocomplete_geo_index",
+    //       compound: {
+    //         should: [
+    //           {
+    //             autocomplete: {
+    //               query: query,
+    //               path: "businessName",
+    //               fuzzy: { maxEdits: 1, prefixLength: 2 },
+    //               score: { boost: { value: 3 } }
+    //             }
+    //           },
+    //           {
+    //             autocomplete: {
+    //               query: query,
+    //               path: "dishes.name",
+    //               fuzzy: { maxEdits: 1, prefixLength: 2 },
+    //               score: { boost: { value: 2 } }
+    //             }
+    //           },
+    //           {
+    //             text: {
+    //               query: query,
+    //               path: "cuisine",
+    //               fuzzy: { maxEdits: 1, prefixLength: 2 },
+    //               score: { boost: { value: 1.5 } }
+    //             }
+    //           }
+    //         ],
+    //         minimumShouldMatch: 1
+    //       }
+    //     }
+    //   },
+    //   { $addFields: { searchScore: { $meta: "searchScore" } } },
+    //   {
+    //     $match: {
+    //       'location.coordinates': {
+    //         $geoWithin: {
+    //           $centerSphere: [
+    //             [lngNum, latNum],
+    //             maxDistanceMeters / 6378100
+    //           ]
+    //         }
+    //       }
+    //     }
+    //   },
+    //   { $limit: 10 }
+    // ]);
+
+    const preFacetLimit = 10;
+
+    const radius = maxDistanceMeters / 6378100;
+
+
+    // const results = await SearchIndex.aggregate([
+    //   {
+    //     $search: {
+    //       index: 'autocomplete_geo_index',
+    //       compound: {
+    //         should: [
+    //           {
+    //             autocomplete: {
+    //               query,
+    //               path: "businessName",
+    //               fuzzy: { maxEdits: 1, prefixLength: 2 },
+    //               score: { boost: { value: 3 } }
+    //             }
+    //           },
+    //           {
+    //             autocomplete: {
+    //               query,
+    //               path: "dishes.name",
+    //               fuzzy: { maxEdits: 1, prefixLength: 2 },
+    //               score: { boost: { value: 2 } }
+    //             }
+    //           },
+    //           {
+    //             text: {
+    //               query,
+    //               path: "cuisine",
+    //               fuzzy: { maxEdits: 1, prefixLength: 2 },
+    //               score: { boost: { value: 1.5 } }
+    //             }
+    //           }
+    //         ],
+    //         minimumShouldMatch: 1
+    //       }
+    //     }
+    //   },
+
+    //   // 2) expose searchScore
+    //   { $addFields: { searchScore: { $meta: "searchScore" } } },
+
+    //   // 3) geo filter
+    //   {
+    //     $match: {
+    //       "location.coordinates": {
+    //         $geoWithin: {
+    //           $centerSphere: [[lngNum, latNum], radius]
+    //         }
+    //       }
+    //     }
+    //   },
+
+    //   // 4) project only required fields to reduce memory before facet/unwind
+    //   {
+    //     $project: {
+    //       _id: 0,
+    //       businessId: 1,
+    //       businessName: 1,
+    //       businessLogoUrl: 1,
+    //       slug: 1,
+    //       location: 1,
+    //       searchScore: 1,
+    //       // keep only necessary dish fields
+    //       dishes: {
+    //         $map: {
+    //           input: { $ifNull: ["$dishes", []] },
+    //           as: "d",
+    //           in: {
+    //             name: "$$d.name",
+    //             // dishId: "$$d.dishId",
+    //             cuisine: "$$d.cuisine",
+    //             // category: "$$d.category",
+    //             // actualPrice: "$$d.actualPrice",
+    //             // offerPrice: "$$d.offerPrice"
+    //           }
+    //         }
+    //       },
+    //       cuisine: 1
+    //     }
+    //   },
+
+    //   // 5) sort by score so grouping with $first keeps the top scoring doc
+    //   { $sort: { searchScore: -1 } },
+
+    //   // 6) small pre-limit to reduce facet work (tune preFacetLimit)
+    //   { $limit: preFacetLimit },
+
+    //   // 7) facet into three result sets
+    //   {
+    //     $facet: {
+    //       // Unique businesses (group by businessId, highest score first because we sorted)
+    //       businesses: [
+    //         {
+    //           $group: {
+    //             _id: "$businessId",
+    //             doc: { $first: "$$ROOT" },    // highest score doc for this business
+    //             score: { $first: "$searchScore" }
+    //           }
+    //         },
+    //         { $replaceRoot: { newRoot: { $mergeObjects: ["$doc", { score: "$score" }] } } },
+    //         {
+    //           $project: {
+    //             _id: 0,
+    //             businessId: 1,
+    //             businessName: 1,
+    //             // businessLogoUrl: 1,
+    //             // slug: 1,
+    //             // location: 1,
+    //             // score: 1
+    //           }
+    //         },
+    //         { $sort: { score: -1 } },
+    //         { $limit: limitNum }
+    //       ],
+
+    //       // Dishes (unwind & dedupe by dishId; keep the occurrence with highest searchScore)
+    //       dishes: [
+    //         { $unwind: "$dishes" },
+    //         // input is already sorted by searchScore globally, but repeat sort to be safe
+    //         { $sort: { searchScore: -1 } },
+    //         {
+    //           $group: {
+    //             _id: "$dishes.dishId",
+    //             doc: { $first: "$$ROOT" },      // doc containing the highest-scoring occurrence
+    //             score: { $first: "$searchScore" }
+    //           }
+    //         },
+    //         {
+    //           $project: {
+    //             _id: 0,
+    //             score: 1,
+    //             name: "$doc.dishes.name",
+    //             // dishId: "$doc.dishes.dishId",
+    //             cuisine: "$doc.dishes.cuisine",
+    //             // category: "$doc.dishes.category",
+    //             // actualPrice: "$doc.dishes.actualPrice",
+    //             // offerPrice: "$doc.dishes.offerPrice",
+    //             // businessName: "$doc.businessName",
+    //             // businessId: "$doc.businessId",
+    //             // businessLogoUrl: "$doc.businessLogoUrl",
+    //             // slug: "$doc.slug",
+    //             // location: "$doc.location"
+    //           }
+    //         },
+    //         { $sort: { score: -1 } },
+    //         { $limit: limitNum }
+    //       ],
+
+    //       // Cuisines (unwind cuisine array, dedupe by cuisine string)
+    //       cuisines: [
+    //         { $unwind: { path: "$cuisine", preserveNullAndEmptyArrays: false } },
+    //         { $sort: { searchScore: -1 } },
+    //         {
+    //           $group: {
+    //             _id: "$cuisine",
+    //             name: { $first: "$cuisine" },
+    //             score: { $first: "$searchScore" }
+    //           }
+    //         },
+    //         { $sort: { score: -1 } },
+    //         { $limit: limitNum },
+    //         { $project: { _id: 0, name: 1, score: 1 } }
+    //       ]
+    //     }
+    //   }
+    // ])
+
+    // console.log("RESULT--->>", JSON.stringify(results))
+
+    // const geoOnlyResults = await SearchIndex.find({
+    //   'location.coordinates': {
+    //     $near: {
+    //       $geometry: {
+    //         type: "Point",
+    //         coordinates: [lngNum, latNum]
+    //       },
+    //       $maxDistance: maxDistanceMeters
+    //     }
+    //   }
+    // }).limit(5);
+
+    // console.log("Geo-only results count:", geoOnlyResults.length);
+    // console.log("First result:", geoOnlyResults[0]?.businessName);
+
+
+    const results = await SearchIndex.aggregate([
+      {
+        $search: {
+          index: "autocomplete_geo_index",
+          compound: {
+            must: [
+              {
+                geoWithin: {
+                  circle: {
+                    center: {
+                      type: "Point",
+                      coordinates: [lngNum, latNum]
+                    },
+                    radius: maxDistanceMeters
+                  },
+                  path: "location"
+                }
+              }
+            ],
+            should: [
+              {
+                autocomplete: {
+                  query,
+                  path: "businessName",
+                  fuzzy: { maxEdits: 1, prefixLength: 2 },
+                  score: { boost: { value: 4 } }
+                }
+              },
+              {
+                autocomplete: {
+                  query,
+                  path: "dishes.name",
+                  fuzzy: { maxEdits: 1, prefixLength: 1 },
+                  score: { boost: { value: 3 } }
+                }
+              },
+              {
+                text: {
+                  query,
+                  path: "cuisine",
+                  fuzzy: { maxEdits: 1 },
+                  score: { boost: { value: 1.5 } }
+                }
+              }
+            ],
+            minimumShouldMatch: 1
+          },
+          returnStoredSource: false,
+          scoreDetails: false
+        }
+      },
+
+      // expose searchScore + geoDistance
+      {
+        $addFields: {
+          searchScore: { $meta: "searchScore" }
+        }
+      },
+
+      // lightweight projection before heavy ops
+      {
+        $project: {
+          _id: 0,
+          businessId: 1,
+          businessName: 1,
+          businessLogoUrl: 1,
+          slug: 1,
+          location: 1,
+          searchScore: 1,
+          distanceMeters: 1,
+          dishes: {
+            $map: {
+              input: { $ifNull: ["$dishes", []] },
+              as: "d",
+              in: {
+                name: "$$d.name",
+                dishId: "$$d.dishId",
+                cuisine: "$$d.cuisine"
+              }
+            }
+          },
+          cuisine: 1
+        }
+      },
+
+      // pre-sort and limit to reduce memory cost
+      { $sort: { searchScore: -1 } },
+      { $limit: preFacetLimit },
+
+      // facets for businesses, dishes, cuisines
+      {
+        $facet: {
+          businesses: [
+            {
+              $group: {
+                _id: "$businessId",
+                doc: { $first: "$$ROOT" },
+                score: { $first: "$searchScore" }
+              }
+            },
+            {
+              $replaceRoot: {
+                newRoot: {
+                  $mergeObjects: ["$doc", { score: "$score" }]
+                }
+              }
+            },
+            {
+              $project: {
+                _id: 0,
+                businessId: 1,
+                businessName: 1,
+                businessLogoUrl: 1,
+                slug: 1,
+                location: 1,
+                score: 1,
+                distanceMeters: 1
+              }
+            },
+            { $sort: { score: -1 } },
+            { $limit: limitNum }
+          ],
+
+          dishes: [
+            { $unwind: "$dishes" },
+            { $sort: { searchScore: -1 } },
+            {
+              $group: {
+                _id: "$dishes.dishId",
+                doc: { $first: "$$ROOT" },
+                score: { $first: "$searchScore" }
+              }
+            },
+            {
+              $project: {
+                _id: 0,
+                score: 1,
+                name: "$doc.dishes.name",
+                cuisine: "$doc.dishes.cuisine",
+                businessName: "$doc.businessName",
+                businessId: "$doc.businessId",
+                distanceMeters: "$doc.distanceMeters"
+              }
+            },
+            { $sort: { score: -1 } },
+            { $limit: limitNum }
+          ],
+
+          cuisines: [
+            { $unwind: { path: "$cuisine", preserveNullAndEmptyArrays: false } },
+            { $sort: { searchScore: -1 } },
+            {
+              $group: {
+                _id: "$cuisine",
+                name: { $first: "$cuisine" },
+                score: { $first: "$searchScore" }
+              }
+            },
+            { $sort: { score: -1 } },
+            { $limit: limitNum },
+            { $project: { _id: 0, name: 1, score: 1 } }
+          ]
+        }
+      }
+    ]);
+
+
+    const businessMap = new Map();
+    const dishMap = new Map();
+    const cuisineMap = new Map();
+    const queryLower = query.toLowerCase();
+
+    results.forEach(doc => {
+      const score = doc.searchScore;
+
+      // Check if business name matches
+      if (doc.businessName) {
+        const nameLower = doc.businessName.toLowerCase();
+        if (nameLower.includes(queryLower)) {
+          let businessScore = score * 3;
+          if (nameLower === queryLower) businessScore += 100;
+          else if (nameLower.startsWith(queryLower)) businessScore += 50;
+
+          if (!businessMap.has(doc.businessName) || businessMap.get(doc.businessName).score < businessScore) {
+            businessMap.set(doc.businessName, {
+              name: doc.businessName,
+              businessId: doc.businessId,
+              logoUrl: doc.businessLogoUrl,
+              slug: doc.slug,
+              location: doc.location,
+            });
+          }
+        }
+      }
+
+      // Check dishes
+      if (doc.dishes && Array.isArray(doc.dishes)) {
+        doc.dishes.forEach(dish => {
+          if (dish.name) {
+            const dishLower = dish.name.toLowerCase();
+            if (dishLower.includes(queryLower)) {
+              let dishScore = score * 2;
+              if (dishLower === queryLower) dishScore += 100;
+              else if (dishLower.startsWith(queryLower)) dishScore += 50;
+
+              const dishKey = `${dish.name}_${dish.dishId}`;
+              if (!dishMap.has(dishKey) || dishMap.get(dishKey).score < dishScore) {
+                dishMap.set(dishKey, {
+                  name: dish.name,
+                  dishId: dish.dishId,
+                  cuisine: dish.cuisine,
+                  category: dish.category,
+                  actualPrice: dish.actualPrice,
+                  offerPrice: dish.offerPrice,
+                  businessName: doc.businessName,
+                  businessId: doc.businessId,
+                  score: dishScore
+                });
+              }
+            }
+          }
+        });
+      }
+
+      // Check cuisines
+      if (doc.cuisine && Array.isArray(doc.cuisine)) {
+        doc.cuisine.forEach(cuisine => {
+          const cuisineLower = cuisine.toLowerCase();
+          if (cuisineLower.includes(queryLower)) {
+            let cuisineScore = score * 2;
+            if (cuisineLower === queryLower) cuisineScore += 100;
+            else if (cuisineLower.startsWith(queryLower)) cuisineScore += 50;
+
+            if (!cuisineMap.has(cuisine) || cuisineMap.get(cuisine).score < cuisineScore) {
+              cuisineMap.set(cuisine, {
+                name: cuisine,
+                score: cuisineScore
+              });
+            }
+          }
+        });
+      }
+    });
+
+    // Convert maps to sorted arrays
+    const businesses = Array.from(businessMap.values())
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limitNum)
+      .map(({ score, ...rest }) => rest);
+
+    const dishes = Array.from(dishMap.values())
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limitNum)
+      .map(({ score, ...rest }) => rest);
+
+    const cuisines = Array.from(cuisineMap.values())
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limitNum)
+      .map(({ score, ...rest }) => rest);
+
+    res.json({
+      success: true,
+      query,
+      // location: { lat: latNum, lng: lngNum },
+      // maxDistance: `${maxDistance} miles`,
+      results
+      // results: {
+      //   business: businesses,
+      //   dish: dishes,
+      //   cuisine: cuisines
+      // }
+    });
+
+  } catch (error) {
+    console.error("Autocomplete Search Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   autocomplete,
   autocompleteAll,
-  autocompleteUnified
+  autocompleteUnified,
+  autocompleteSearch
 };
